@@ -14,9 +14,14 @@ public class Crime {
     private String mTitle;
     private boolean mSolved;
 
+
+
+    private boolean mPolice;
+
     public Crime(){
         mId =  UUID.randomUUID();
         mDate = new Date();
+        mPolice =false;
     }
 
     public UUID getId() {
@@ -49,5 +54,12 @@ public class Crime {
 
     public void setSolved(boolean solved) {
         mSolved = solved;
+    }
+    public boolean isPolice() {
+        return mPolice;
+    }
+
+    public void setPolice(boolean police) {
+        mPolice = police;
     }
 }
