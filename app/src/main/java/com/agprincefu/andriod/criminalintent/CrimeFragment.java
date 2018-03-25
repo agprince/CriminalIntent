@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import java.util.UUID;
  */
 
 public class CrimeFragment extends Fragment {
+
+    private static final String TAG = "agtest";
 
     private static final String ARG_CRIME_ID="crime_id";
     private Crime mCrime;
@@ -43,7 +46,22 @@ public class CrimeFragment extends Fragment {
        // UUID crimeId = (UUID) getActivity().getIntent().getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID);
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
 
+        long time  =System.currentTimeMillis();
+
+        Log.d(TAG,"getCrime  start time : "+ time);
+
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
+
+        Log.d(TAG,"getCrime   time : " + (System.currentTimeMillis()-time));
+
+        long timeTest  =System.currentTimeMillis();
+
+        Log.d(TAG,"getCrime Quick start time : "+ timeTest);
+
+        mCrime = CrimeLab.get(getActivity()).getCrimeQuick(crimeId);
+
+        Log.d(TAG,"getCrime Quick  time : " + (System.currentTimeMillis()-timeTest));
+        
     }
 
     @Nullable
