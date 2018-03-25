@@ -5,12 +5,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,7 +63,7 @@ public class CrimeListFragment extends Fragment {
         public void bind(Crime crime){
            mCrime = crime;
            mCrimeTitle.setText(mCrime.getTitle());
-           mCrimeDate.setText(mCrime.getDate().toString());
+           mCrimeDate.setText(formatDateAndroid(mCrime.getDate()));
            mCrimeSolved.setVisibility(mCrime.isSolved()?View.VISIBLE:View.GONE);
         }
     }
@@ -89,5 +92,21 @@ public class CrimeListFragment extends Fragment {
             return mCrimes.size();
 
         }
+    }
+
+    private String formatDate(Date date){
+        String format = null;
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        format = simpleDateFormat.format(date);
+
+        return format;
+    }
+    private String formatDateAndroid(Date date){
+        String format = null;
+        format = DateFormat.format("HH:mm:ss yyyy-MM-dd",date).toString();
+
+        return format;
     }
 }
