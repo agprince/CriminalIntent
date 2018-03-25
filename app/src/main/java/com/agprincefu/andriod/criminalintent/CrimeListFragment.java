@@ -51,7 +51,7 @@ public class CrimeListFragment extends Fragment {
     }
 
     private void updateUi() {
-        if (mCrimeRecyclerView == null) {
+        if (mCrimeAdapter == null) {
             mCrimeAdapter = new CrimeAdapter(CrimeLab.get(getActivity()).getCrimes());
             mCrimeRecyclerView.setAdapter(mCrimeAdapter);
         } else {
@@ -87,7 +87,8 @@ public class CrimeListFragment extends Fragment {
         public void onClick(View v) {
             //Toast.makeText(getActivity(),mCrime.getTitle(),Toast.LENGTH_SHORT).show();
             //Intent startCrime = new Intent(getActivity(),CrimeActivity.class);
-            Intent startCrime = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            //Intent startCrime = CrimeActivity.newIntent(getActivity(), mCrime.getId());
+            Intent startCrime = CrimePagerActivity.newIntent(getActivity(),mCrime.getId());
             startActivity(startCrime);
         }
     }
