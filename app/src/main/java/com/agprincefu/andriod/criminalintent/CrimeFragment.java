@@ -28,6 +28,7 @@ public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID="crime_id";
     private static final String DATE_FRAGMENT_TAG=" date_fragment";
+    private static final String TIME_FRAGMENT_TAG=" time_fragment";
 
     private static final int REQUEST_CODE_DATE= 1;
 
@@ -35,6 +36,7 @@ public class CrimeFragment extends Fragment {
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
+    private Button mTimeButton;
 
     public static CrimeFragment newInstance(UUID id){
         Bundle bundle = new Bundle();
@@ -63,6 +65,8 @@ public class CrimeFragment extends Fragment {
         mTitleField =v.findViewById(R.id.crime_title);
         mDateButton = v.findViewById(R.id.crime_date);
         mSolvedCheckBox = v.findViewById(R.id.crime_solved);
+        mTimeButton = v.findViewById(R.id.crime_time);
+
 
         mTitleField.setText(mCrime.getTitle());
         mSolvedCheckBox.setChecked(mCrime.isSolved());
@@ -85,7 +89,7 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-        mDateButton.setText(mCrime.getDate().toString());
+        mDateButton.setText(DateUtil.dateSimple(mCrime.getDate()));
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +103,20 @@ public class CrimeFragment extends Fragment {
 
             }
         });
+
+        mTimeButton.setText(DateUtil.timeSimple(mCrime.getDate()));
+        mTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                TimePickerFragment fragment = TimePickerFragment.newInstance(getActivity(),mCrime.getDate());
+                FragmentManager fragmentManager = getFragmentManager();
+                fragment.show(fragmentManager,TIME_FRAGMENT_TAG);
+
+            }
+        });
+
+
 
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
