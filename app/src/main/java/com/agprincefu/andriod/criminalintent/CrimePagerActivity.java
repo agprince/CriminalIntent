@@ -17,11 +17,11 @@ public class CrimePagerActivity extends AppCompatActivity {
     private static final String EXTRA_CRIME_ID = "com.agprincefu.android.criminalintent.crime_id";
 
     private ViewPager mCrimeViewPager;
-    private List<Crime>mCrimes;
+    private List<Crime> mCrimes;
 
-    public static Intent newIntent(Context context, UUID id){
-        Intent intent = new Intent(context,CrimePagerActivity.class);
-        intent.putExtra(EXTRA_CRIME_ID,id);
+    public static Intent newIntent(Context context, UUID id) {
+        Intent intent = new Intent(context, CrimePagerActivity.class);
+        intent.putExtra(EXTRA_CRIME_ID, id);
         return intent;
     }
 
@@ -52,13 +52,13 @@ public class CrimePagerActivity extends AppCompatActivity {
             }
         });
 
-        for(int i=0;i<mCrimes.size();i++){
-            if(mCrimes.get(i).getId().equals(crimeId)){
+        for (int i = 0; i < mCrimes.size(); i++) {
+            if (mCrimes.get(i).getId().equals(crimeId)) {
                 mCrimeViewPager.setCurrentItem(i);
                 break;
             }
         }
     }
 
-   
+
 }
