@@ -66,10 +66,14 @@ public class CrimeListFragment extends Fragment {
     }
 
     private void updateUi() {
+        CrimeLab crimeLab = CrimeLab.get(getActivity());
+        List<Crime> crimes = crimeLab.getCrimes();
+
         if (mCrimeAdapter == null) {
-            mCrimeAdapter = new CrimeAdapter(CrimeLab.get(getActivity()).getCrimes());
+            mCrimeAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mCrimeAdapter);
         } else {
+            mCrimeAdapter.setCrimes(crimes);
             mCrimeAdapter.notifyDataSetChanged();
         }
         updateSubtitile();
@@ -177,6 +181,11 @@ public class CrimeListFragment extends Fragment {
         public int getItemCount() {
 
             return mCrimes.size();
+
+        }
+        public void setCrimes(List<Crime> crimes){
+
+            mCrimes = crimes;
 
         }
     }
