@@ -9,6 +9,7 @@ import com.agprincefu.andriod.criminalintent.database.CrimeBaseHelper;
 import com.agprincefu.andriod.criminalintent.database.CrimeCursorWrapper;
 import com.agprincefu.andriod.criminalintent.database.CrimeDbSchema.CrimeTable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -86,6 +87,11 @@ public class CrimeLab {
         }
 
         return crimes;
+    }
+
+    public File getPhotoFile(Crime crime){
+        File filedir = mContext.getFilesDir();
+        return  new File(filedir,crime.getPhotoFilename());
     }
 
     public void updateCrime(Crime crime) {
