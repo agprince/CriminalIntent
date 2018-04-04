@@ -18,9 +18,11 @@ import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -39,8 +41,11 @@ import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
 
+    private static final String TAG = "agtest";
+
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DATE_FRAGMENT_TAG = " date_fragment";
+    private static final String IMAGE_FRAGEMETN_TAG="ImageView_fragment";
 
     private static final int REQUEST_CODE_DATE = 1;
     private static final int REQUEST_CONTACT = 2;
@@ -55,6 +60,9 @@ public class CrimeFragment extends Fragment {
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
     private File mPhotoFile;
+
+    private int mPhotoWidth = 0;
+    private int mPhotoHeight=0 ;
 
 
     public static CrimeFragment newInstance(UUID id) {
@@ -185,7 +193,51 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+
+
+        ViewTreeObserver observer = mPhotoView.getViewTreeObserver();
+        if (observer.isAlive()) {
+            observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    mPhotoView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        mPhotoWidth = mPhotoView.getMeasuredWidth();
+                     mPhotoHeight = mPhotoView.getMeasuredHeight();
+
+                    //setPhotoWidth(mPhotoView.getMeasuredWidth());
+                    //setPhotoHeight(mPhotoView.getMeasuredHeight());
+
+                    Log.d(TAG, "onGlobalLayout: mPhotoWidth = " + mPhotoWidth);
+                    Log.d(TAG, "onGlobalLayout: mPhotoHeight = " + mPhotoHeight);
+                }
+            });
+
+            Log.d(TAG, "After onGlobalLayout: mPhotoWidth = " + mPhotoWidth);
+            Log.d(TAG, "After onGlobalLayout: mPhotoHeight = " + mPhotoHeight);
+        }
+
+
+
+
+
+        mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                ImageViewFragment fragment =ImageViewFragment.newInstance(mCrime);
+                FragmentManager fragmentManager = getFragmentManager();
+                fragment.show(fragmentManager,IMAGE_FRAGEMETN_TAG);
+            }
+        });
+
+
+
+
+
         updataPhotoView();
+
+
 
 
         return v;
@@ -235,8 +287,13 @@ public class CrimeFragment extends Fragment {
     private void updataPhotoView(){
         if(mPhotoFile==null||!mPhotoFile.exists()){
             mPhotoView.setImageDrawable(null);
-        }else{
+        }else if(mPhotoHeight>0&& mPhotoWidth>0){
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(),mPhotoWidth,mPhotoHeight);
+            Log.d(TAG, "updataPhotoView: 自动适应");
+            mPhotoView.setImageBitmap(bitmap);
+        }else {
             Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(),getActivity());
+            Log.d(TAG, "updataPhotoView: 非自动适应,采用默认的activity");
             mPhotoView.setImageBitmap(bitmap);
         }
     }

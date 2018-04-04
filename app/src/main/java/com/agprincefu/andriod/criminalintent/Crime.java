@@ -1,5 +1,6 @@
 package com.agprincefu.andriod.criminalintent;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -7,7 +8,7 @@ import java.util.UUID;
  * Created by agprincefu on 2018/1/27.
  */
 
-public class Crime {
+public class Crime implements Serializable {
 
     private UUID mId;
     private Date mDate;

@@ -17,7 +17,7 @@ public class PictureUtils {
 
         int width = point.x;
         int height = point.y;
-        Log.d(TAG, "getScaledBitmap: width: "+width+" height : "+height);
+        Log.d(TAG, "getScaledBitmap:  dest_width: "+width+" dest_height : "+height);
 
         return getScaledBitmap(path,width,height);
     }
@@ -33,6 +33,8 @@ public class PictureUtils {
         float srcHeight = options.outHeight;
         int inSampleSize = 1;
 
+        Log.d(TAG, "getScaledBitmap:  srcWidth: "+srcWidth+" srcHeight : "+srcHeight);
+
         if(srcHeight>destHeight||srcWidth>destWidth){
             int scaleHeight = (int) (srcHeight/destHeight);
             int scaleWidth = (int) (srcWidth/destWidth);
@@ -42,8 +44,17 @@ public class PictureUtils {
         options = new BitmapFactory.Options();
         options.inSampleSize = inSampleSize;
 
-
+        Log.d(TAG, "getScaledBitmap: scale bitmap");
         return BitmapFactory.decodeFile(path,options);
+    }
+
+    public static Bitmap getBigBitmap(String path){
+
+       Bitmap bitmap =  BitmapFactory.decodeFile(path);
+
+        Log.d(TAG, "source bitmap");
+       return bitmap;
+
     }
 
 }
