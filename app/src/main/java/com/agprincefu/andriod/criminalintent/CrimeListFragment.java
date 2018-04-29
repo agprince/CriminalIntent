@@ -1,6 +1,7 @@
 package com.agprincefu.andriod.criminalintent;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,6 +35,20 @@ public class CrimeListFragment extends Fragment {
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
 
     private boolean mSubtitleVisible;
+
+    private Callbacks mCallbacks;
+
+    public interface Callbacks{
+
+        void onCrimeSelected(Crime crime);
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,7 +81,13 @@ public class CrimeListFragment extends Fragment {
         updateUi();
     }
 
-    private void updateUi() {
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks=null;
+    }
+
+    public void updateUi() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
 
@@ -101,8 +123,11 @@ public class CrimeListFragment extends Fragment {
             case R.id.add_crime:
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
-                Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
-                startActivity(intent);
+                //Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
+                //startActivity(intent);
+                mCallbacks.onCrimeSelected(crime);
+                updateUi();
+
                 return true;
             case R.id.show_subtitle:
                 mSubtitleVisible = !mSubtitleVisible;
@@ -152,8 +177,9 @@ public class CrimeListFragment extends Fragment {
             //Toast.makeText(getActivity(),mCrime.getTitle(),Toast.LENGTH_SHORT).show();
             //Intent startCrime = new Intent(getActivity(),CrimeActivity.class);
             //Intent startCrime = CrimeActivity.newIntent(getActivity(), mCrime.getId());
-            Intent startCrime = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
-            startActivity(startCrime);
+            //Intent startCrime = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());
+            //startActivity(startCrime);
+            mCallbacks.onCrimeSelected(mCrime);
         }
     }
 
