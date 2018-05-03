@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.telecom.Call;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,12 +38,62 @@ public class CrimeListFragment extends Fragment {
 
     private boolean mSubtitleVisible;
 
+    private ItemTouchHelper mItemTouchHelper;
+
     private Callbacks mCallbacks;
+
+
+
+    public interface ItemTouchHelperAdapter{
+        void onItemMove(int fromPosition,int toPosition);
+        void onItemDismiss(int position);
+    }
+
+
+
 
     public interface Callbacks{
 
         void onCrimeSelected(Crime crime);
 
+    }
+
+
+
+    public class CrimeItemTouchHelperCallBack extends ItemTouchHelper.Callback{
+
+        private ItemTouchHelperAdapter mHelperAdapter;
+
+        public CrimeItemTouchHelperCallBack(ItemTouchHelperAdapter itemTouchHelperAdapter){
+            mHelperAdapter = itemTouchHelperAdapter;
+        }
+
+
+
+        @Override
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            int moveDir = ItemTouchHelper.RIGHT;
+            int dragFlags = ItemTouchHelper.UP|ItemTouchHelper.DOWN;
+
+            return makeMovementFlags(dragFlags,moveDir);
+
+
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+
+            mHelperAdapter.onItemMove(viewHolder.getAdapterPosition(),target.getAdapterPosition());
+
+            return true;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+            mHelperAdapter.onItemDismiss(viewHolder.getAdapterPosition());
+
+        }
     }
 
     @Override
@@ -53,6 +105,8 @@ public class CrimeListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
         if(savedInstanceState!=null){
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
@@ -69,7 +123,12 @@ public class CrimeListFragment extends Fragment {
 
         mCrimeRecyclerView = view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
         updateUi();
+
+        mItemTouchHelper = new ItemTouchHelper(new CrimeItemTouchHelperCallBack(mCrimeAdapter));
+        mItemTouchHelper.attachToRecyclerView(mCrimeRecyclerView);
+
 
 
         return view;
@@ -183,7 +242,7 @@ public class CrimeListFragment extends Fragment {
         }
     }
 
-    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
+    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> implements ItemTouchHelperAdapter {
 
         private List<Crime> mCrimes;
 
@@ -212,6 +271,25 @@ public class CrimeListFragment extends Fragment {
         public void setCrimes(List<Crime> crimes){
 
             mCrimes = crimes;
+
+        }
+
+        @Override
+        public void onItemMove(int fromPosition, int toPosition) {
+            CrimeLab.get(getActivity()).move(mCrimes.get(fromPosition),mCrimes.get(toPosition));
+            Collections.swap(mCrimes,fromPosition,toPosition);
+            notifyItemMoved(fromPosition,toPosition);
+
+
+        }
+
+        @Override
+        public void onItemDismiss(int position) {
+
+            CrimeLab.get(getActivity()).deleteCrime(mCrimes.get(position));
+            mCrimes.remove(position);
+            notifyItemRemoved(position);
+
 
         }
     }

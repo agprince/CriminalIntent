@@ -54,6 +54,32 @@ public class CrimeLab {
 
     }
 
+    public void move(Crime from,Crime to){
+        Crime temp = new Crime();
+
+        temp.setTitle("test");
+        temp.setSolved(false);
+        temp.setSuspect("test");
+
+
+
+        ContentValues tempvalues = getContentValues(temp);
+        ContentValues fromvalues = getContentValues(from);
+        ContentValues tovalues = getContentValues(to);
+        mDatabase.update(CrimeTable.NAME, tempvalues, CrimeTable.Cols.UUID + " = ?" , new String[]{from.getId().toString()});
+        mDatabase.update(CrimeTable.NAME,fromvalues,CrimeTable.Cols.UUID+" = ?",new String[]{to.getId().toString()});
+        mDatabase.update(CrimeTable.NAME,tovalues,CrimeTable.Cols.UUID+" = ?",new String[]{temp.getId().toString()});
+
+
+
+
+    }
+
+    public void deleteCrime(Crime crime){
+        String uuidString = crime.getId().toString();
+        mDatabase.delete(CrimeTable.NAME,CrimeTable.Cols.UUID+"=?",new String[]{uuidString});
+    }
+
     public Crime getCrime(UUID id) {
 
         CrimeCursorWrapper cursor = queryCrimes(CrimeTable.Cols.UUID +" = ?",new String[]{id.toString()});
