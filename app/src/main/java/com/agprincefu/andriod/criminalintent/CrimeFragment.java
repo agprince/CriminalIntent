@@ -19,6 +19,7 @@ import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import android.widget.ImageView;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -39,6 +41,8 @@ import java.util.UUID;
  */
 
 public class CrimeFragment extends Fragment {
+
+    private static final String TAG = "agtest";
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DATE_FRAGMENT_TAG = " date_fragment";
@@ -127,7 +131,8 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-        mDateButton.setText(mCrime.getDate().toString());
+        //mDateButton.setText(mCrime.getDate().toString());
+        mDateButton.setText(localDate(mCrime.getDate()));
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,7 +232,8 @@ public class CrimeFragment extends Fragment {
         if (requestCode == REQUEST_CODE_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
-            mDateButton.setText(mCrime.getDate().toString());
+            //mDateButton.setText(mCrime.getDate().toString());
+            mDateButton.setText(localDate(mCrime.getDate()));
             updataCrime();
         } else if (requestCode == REQUEST_CONTACT) {
             Uri contactUri = data.getData();
@@ -288,5 +294,17 @@ public class CrimeFragment extends Fragment {
         }
         String report = getString(R.string.crime_report, mCrime.getTitle(), dateString, solvedString, suspect);
         return report;
+    }
+
+    private String localDate(Date date){
+
+        Log.d(TAG, "before format ,data : "+ date.toString());
+
+        String dateString = null;
+
+        dateString = java.text.DateFormat.getDateInstance(java.text.DateFormat.LONG, Locale.getDefault()).format(date).toString();
+
+        Log.d(TAG, "after format ,data : "+ dateString);
+        return dateString ;
     }
 }
